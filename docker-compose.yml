@@ -1,0 +1,64 @@
+# Rails 8 JSON-RPC Demo - Docker Compose
+# Orchestrates client_app and server_app for demonstrating JSON-RPC data flow
+
+services:
+  server_app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.server
+    container_name: json-rpc-server
+    ports:
+      - "3000:3000"   # Rails web server
+      - "8999:8999"   # JSON-RPC server
+    environment:
+      - RAILS_ENV=development
+      - JSON_RPC_HOST=0.0.0.0
+      - JSON_RPC_PORT=8999
+      - START_JSON_RPC_SERVER=true
+    volumes:
+      # Mount the entire active_data_flow repo for path-based gems
+      - ../../..:/active_data_flow:cached
+      # Mount server_app as the working directory
+      - ./server_app:/app:cached
+      # Persist bundle cache
+      - bundle_cache:/bundle
+    working_dir: /app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - json-rpc-network
+
+  client_app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.client
+    container_name: json-rpc-client
+    ports:
+      - "3001:3001"   # Rails web server
+    environment:
+      - RAILS_ENV=development
+      - JSON_RPC_SERVER_URL=http://server_app:8999
+    volumes:
+      # Mount the entire active_data_flow repo for path-based gems
+      - ../../..:/active_data_flow:cached
+      # Mount client_app as the working directory
+      - ./client_app:/app:cached
+      # Persist bundle cache
+      - bundle_cache:/bundle
+    working_dir: /app
+    depends_on:
+      server_app:
+        condition: service_healthy
+    networks:
+      - json-rpc-network
+
+volumes:
+  bundle_cache:
+
+networks:
+  json-rpc-network:
+    driver: bridge

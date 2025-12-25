@@ -7,6 +7,31 @@ This demo showcases ActiveDataFlow JSON-RPC connector usage in Rails 8 applicati
 
 ## Quick Start
 
+### Option 1: Docker (Recommended)
+
+Run the demo with Docker Compose:
+
+```bash
+./start_docker_demo.sh
+```
+
+Or manually:
+
+```bash
+docker compose up --build
+```
+
+Access:
+- ServerApp: http://localhost:3000
+- ClientApp: http://localhost:3001
+
+Stop with:
+```bash
+docker compose down
+```
+
+### Option 2: Local Development
+
 1. **Setup**: Run the setup script to install dependencies and create databases
    ```bash
    ./setup_demo.sh

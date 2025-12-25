@@ -25,9 +25,11 @@ class DatabaseToJsonRpcFlow < ActiveDataFlow::DataFlow
 
   def self.configure_sink
     # JSON-RPC sink configuration
+    # Uses environment variable for Docker networking compatibility
+    server_url = ENV.fetch('JSON_RPC_SERVER_URL', 'http://localhost:8999')
     {
       class_name: "ActiveDataFlow::Connector::Sink::JsonRpcSink",
-      url: 'http://localhost:8999',
+      url: server_url,
       batch_size: 10,
       timeout: 30,
       retry_attempts: 3

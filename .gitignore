@@ -1,0 +1,23 @@
+# Ignore tmp directories
+**/tmp/
+
+# Ignore log files
+*.log
+
+# Ignore SQLite databases
+*.sqlite3
+*.sqlite3-*
+
+# Ignore cache files
+.cache/
+**/cache/
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
